@@ -48,7 +48,9 @@ public class ExcelUtils {
                 Cell cell = contentRow.createCell(j);
                 String headField = headFields.get(j);
                 Object value = dataList.get(i - 1).get(headField);
-                cell.getCellStyle().cloneStyleFrom(contentStyle);
+                // cell.cloneStyleFrom会导致所有单元格样式发生改变
+//                cell.getCellStyle().cloneStyleFrom(contentStyle);
+                cell.setCellStyle(contentStyle);
                 setCellValue(cell, value);
             }
         }
