@@ -5,8 +5,8 @@ package com.zheng.highconcurrent.thread;
  */
 public class InterruptThreadApp {
     public static void main(String[] args) {
-//        sleepInterrupt();
-        loopInterrupt();
+        sleepInterrupt();
+//        loopInterrupt();
     }
 
     /**
@@ -49,6 +49,7 @@ public class InterruptThreadApp {
                 System.out.println("interrupt handle");
                 // 重新设置中断标识
                 Thread.currentThread().interrupt();
+//                System.out.println("isInterrupted: " + Thread.currentThread().isInterrupted());
                 e.printStackTrace();
             }
         });
