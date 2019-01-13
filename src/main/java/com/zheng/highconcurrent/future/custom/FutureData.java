@@ -1,4 +1,4 @@
-package com.zheng.highconcurrent.future;
+package com.zheng.highconcurrent.future.custom;
 
 /**
  * @Author zhenglian
