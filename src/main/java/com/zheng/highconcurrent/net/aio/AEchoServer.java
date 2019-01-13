@@ -34,6 +34,7 @@ public class AEchoServer {
                 buffer.clear();
                 Future<Integer> writeResult = null;
                 try {
+                    // AIO数据准备也是在线程中执行的，所以相比NIO，还是比较耗费资源的
                     long start = System.currentTimeMillis();
                     result.read(buffer).get(100, TimeUnit.SECONDS);
                     buffer.flip();
