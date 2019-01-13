@@ -154,7 +154,12 @@ public class NEchoServer {
     }
 
     private static void disconnect(SelectionKey key) {
-        key.cancel();
+        SocketChannel channel = (SocketChannel) key.channel();
+        try {
+            channel.socket().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
