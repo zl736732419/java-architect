@@ -21,7 +21,7 @@ import java.util.List;
  *
  * </pre>
  */
-public class ArgTest {
+public class JVMArgTest {
 
     /**
      * -verbose:gc
