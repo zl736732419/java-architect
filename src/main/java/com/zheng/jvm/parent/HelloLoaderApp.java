@@ -25,6 +25,15 @@ public class HelloLoaderApp {
             如果添加VM参数：-Xbootclasspath/a:C:\Users\Administrator\Desktop\tmp，并重新生成HelloLoader类字节码，再次运行将会打印
             tmp目录下的HelloLoader内容，因为这个目录已经加入到BootClassLoader类加载的路径中，所以可以找到并实例化，本地classpath类将无法
             生效
+            
+            tmp/com/zheng/jvm/parent/HelloLoader.java
+            public class HelloLoader {
+                // 在拷贝该类到其它目录并制定
+                public void print() {
+                    System.out.println("i'm boot loader");
+                }
+            }
+            编译生成类字节码：javac -encoding UTF-8 HelloLoader.java
          */
         new HelloLoader().print();
     }
