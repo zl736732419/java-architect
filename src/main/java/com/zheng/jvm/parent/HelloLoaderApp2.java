@@ -42,13 +42,9 @@ public class HelloLoaderApp2 {
                 .append(".class").toString();
         File file = new File(path);
         InputStream input = new FileInputStream(file);
-        byte[] bytes = new byte[1024];
-        int length = input.read(bytes);
+        byte[] bytes = new byte[(int) file.length()];
+        input.read(bytes);
         input.close();
-        byte[] result = new byte[length];
-        for (int i = 0; i < length; i++) {
-            result[i] = bytes[i];
-        }
-        return result;
+        return bytes;
     }
 }
