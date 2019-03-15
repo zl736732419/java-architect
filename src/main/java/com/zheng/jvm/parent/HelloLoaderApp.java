@@ -26,6 +26,13 @@ public class HelloLoaderApp {
             tmp目录下的HelloLoader内容，因为这个目录已经加入到BootClassLoader类加载的路径中，所以可以找到并实例化，本地classpath类将无法
             生效
             
+            语法解释：
+            
+            -Xbootclasspath:<location> 不常用，将覆盖BootClassLoader默认类加载路径
+            -Xbootclasspath/a:<location> 常用，将<location>添加到默认类加载路径尾部
+            -Xbootclasspath/p:<location> 不常用，将<location>添加到默认类加载路径前面，避免引起不必要的冲突
+            
+            
             tmp/com/zheng/jvm/parent/HelloLoader.java
             public class HelloLoader {
                 // 在拷贝该类到其它目录并制定
