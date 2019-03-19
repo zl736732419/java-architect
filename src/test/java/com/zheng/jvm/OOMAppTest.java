@@ -4,9 +4,7 @@ import org.junit.Test;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author zhenglian
@@ -35,22 +33,22 @@ public class OOMAppTest {
      * 解决方式：
      * 增大Perm区
      * 允许class回收
-     * -Xmx50m -Xms50m -XX:PermSize=1k -XX:+PrintGCDetails
-     * [GC (Allocation Failure) [ParOldGen: 1233K->1237K(34304K)] 
+     * [Full GC (Ergonomics) [PSYoungGen: 5120K->0K(88576K)] 
+     * 这里说明永久区已经被占满，无法分配多余内存
+     * [ParOldGen: 173961K->161154K(347136K)] 179081K->161154K(435712K), 
+     * 
+     * [Metaspace: 4819K->4819K(1056768K)], 1.4138791 secs] 
+     * [Times: user=3.41 sys=0.05, real=1.41 secs] 
+     * [GC (Allocation Failure) 
+     * [PSYoungGen: 83456K->5120K(104960K)] 244610K->244762K(452096K), 0.2415082 secs] 
+     * [Times: user=0.52 sys=0.05, real=0.24 secs] 
      */
     @Test
     public void permOOM() throws Exception {
-        List<CglibBean> list = new ArrayList<>();
-        for(int i=0;i<100000;i++){
-            // 设置类成员属性  
-            Map<String, Object> propertyMap = new HashMap();
-            propertyMap.put("id" + i, Class.forName("java.lang.Integer"));
-            propertyMap.put("name" + i, Class.forName("java.lang.String"));
-            propertyMap.put("address" + i, Class.forName("java.lang.String"));
-            // 生成动态 Bean
-            CglibBean bean = new CglibBean(propertyMap);
-            list.add(bean);
-            System.gc();
+        List<String> list = new ArrayList<>();
+        int i = 0;
+        while(true) {
+            list.add(String.valueOf(i++).intern());
         }
     }
 
