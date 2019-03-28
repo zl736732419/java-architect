@@ -7,9 +7,13 @@ import java.net.URLClassLoader;
 
 public class HelloMain {
     private URLClassLoader classLoader;
-    private Object worker;
+    private Class cls;
     private long lastTime;
-    private String classDir = "D:\\projects\\java-architect\\target\\classes";
+    private String classDir;
+    
+    public HelloMain() {
+        classDir = this.getClass().getResource("/").getPath();
+    }
 
     public static void main(String[] args) throws Exception {
         HelloMain helloMain = new HelloMain();
@@ -22,6 +26,7 @@ public class HelloMain {
             if (checkIsNeedLoad()) {
                 System.out.println("检测到新版本，准备重新加载");
                 reload();
+                System.out.println(cls);
                 System.out.println("重新加载完成");
             }
             //一秒
@@ -35,21 +40,18 @@ public class HelloMain {
         //通过反射方式调用
         //使用反射的主要原因是：不想Work被appclassloader加载，
 //		如果被appclassloader加载的话，再通过自定义加载器加载会有点问题
-		Method method=worker.getClass().getDeclaredMethod("sayHello", null);
-		method.invoke(worker, null);
+		Method method=cls.getDeclaredMethod("sayHello", null);
+		method.invoke(cls.newInstance(), null);
     }
 
     private void reload() throws Exception {
         classLoader = new MyClassLoader(new URL[]{new URL(
                 "file:" + classDir)});
-        worker = classLoader.loadClass("com.zheng.jvm.hotloading.Worker")
-                .newInstance();
-        Thread.sleep(100);
-
+        cls = classLoader.loadClass("com.zheng.jvm.hotloading.Worker");
     }
 
     private boolean checkIsNeedLoad() {
-        File file = new File(classDir + "\\com\\zheng\\jvm\\hotloading\\Worker.class");
+        File file = new File(classDir + "com\\zheng\\jvm\\hotloading\\Worker.class");
         long newTime = file.lastModified();
         if (newTime > lastTime || lastTime == 0) {
             lastTime = newTime;
