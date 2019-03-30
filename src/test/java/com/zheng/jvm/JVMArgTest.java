@@ -37,6 +37,7 @@ public class JVMArgTest {
      * -XX:+PrintGC
      * [GC (System.gc())  21988K->1411K(125952K), 0.0018571 secs]
      * [Full GC (System.gc())  1411K->1262K(125952K), 0.0063178 secs]
+     *
      * @throws Exception
      */
     @Test
@@ -46,12 +47,13 @@ public class JVMArgTest {
 
     /**
      * -XX:+PrintGCDetails -XX:+PrintGCTimeStamps
-     * 0.794: [GC (System.gc()) [PSYoungGen: 20661K->1336K(38400K)] 20661K->1336K(125952K), 0.0954791 secs] 
-     *          [Times: user=0.05 sys=0.00, real=0.10 secs] 
-     * 0.889: [Full GC (System.gc()) [PSYoungGen: 1336K->0K(38400K)] 
-     *        [ParOldGen: 0K->1263K(87552K)] 1336K->1263K(125952K), 
-     *        [Metaspace: 4809K->4809K(1056768K)], 0.0101103 secs] 
-     *          [Times: user=0.02 sys=0.00, real=0.01 secs] 
+     * 0.794: [GC (System.gc()) [PSYoungGen: 20661K->1336K(38400K)] 20661K->1336K(125952K), 0.0954791 secs]
+     * [Times: user=0.05 sys=0.00, real=0.10 secs]
+     * 0.889: [Full GC (System.gc()) [PSYoungGen: 1336K->0K(38400K)]
+     * [ParOldGen: 0K->1263K(87552K)] 1336K->1263K(125952K),
+     * [Metaspace: 4809K->4809K(1056768K)], 0.0101103 secs]
+     * [Times: user=0.02 sys=0.00, real=0.01 secs]
+     *
      * @throws Exception
      */
     @Test
@@ -131,7 +133,7 @@ public class JVMArgTest {
     public void heapOOMDump() {
         List<byte[]> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            list.add(new byte[1024*1024]);
+            list.add(new byte[1024 * 1024]);
         }
     }
 
@@ -151,12 +153,37 @@ public class JVMArgTest {
     public void stack() {
         gcCode();
     }
-    
-    
+
+
     private void gcCode() {
         for (int i = 0; i < 1000; i++) {
             System.out.println(i);
         }
         System.gc();
     }
+
+    /**
+     * -verbose:gc
+     * 没加int a= 0;之前，gc结果为：
+     * [GC (System.gc())  72881K->66896K(125952K), 0.0055511 secs]
+     * [Full GC (System.gc())  66896K->66813K(125952K), 0.0167158 secs]
+     * 添加之后，gc结果为：
+     * [GC (System.gc())  72881K->66912K(125952K), 0.0035348 secs]
+     * [Full GC (System.gc())  66912K->1277K(125952K), 0.0146786 secs]
+     * 虽然placeholder在gc发生之前已经脱离了作用域，但是gc依然没有对placeholder进行gc操作，
+     * 这是因为在没有添加int a = 0;之前，栈桢中的局部变量表没有其他读写操作，placeholder原本占用
+     * 的slot还没有被其他变量所复用，所以作为GC Roots一部分的局部变量表仍然保持着对它的关联。这种关联
+     * 没有被打断。
+     * Practical Java中推荐把不使用的对象手动赋值为null（往往对于大对象非常有用）
+     */
+    @Test
+    public void testBigObjGC() {
+        {
+            byte[] placeholder = new byte[64 * 1024 * 1024];
+//            placeholder = null;
+        }
+        int a = 0; // placeholder = null 与 int a = 0;代码等效
+        System.gc();
+    }
+
 }
